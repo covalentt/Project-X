@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Safety Mask — Live Monitor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ── TOP BAR ── -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="logo-mark" aria-hidden="true">SM</div>
+      <div>
+        <h1 class="site-title">Safety Mask</h1>
+        <p class="site-sub">Live Sensor Monitor — 4 Devices</p>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <span class="live-dot" id="live-dot" aria-hidden="true"></span>
+      <span class="live-label" id="live-label">Connecting…</span>
+      <span class="last-updated" id="last-updated">—</span>
+    </div>
+  </header>
+
+  <!-- ── ALERT BANNER (reflects Device 01 — the live unit) ── -->
+  <div class="alert-banner" id="alert-banner" role="alert" aria-live="polite">
+    <span class="alert-icon" id="alert-icon">◉</span>
+    <span class="alert-text" id="alert-text">Loading sensor data…</span>
+  </div>
+
+  <main class="main">
+
+    <!-- ── DEVICE FLEET ── -->
+    <section class="devices-grid" aria-label="Device fleet readings">
+
+      <!-- DEVICE 01 — LIVE -->
+      <div class="device-panel live" id="device-panel-1">
+        <div class="device-header">
+          <div class="device-header-left">
+            <span class="device-dot live-pulse"></span>
+            <span class="device-name">Device 01 — Field Unit A</span>
+          </div>
+          <span class="device-badge live" id="device-badge-1">LIVE</span>
+        </div>
+
+        <div class="metric-row" aria-label="Device 01 readings">
+          <div class="metric-card" id="card-gas-1">
+            <div class="metric-header">
+              <span class="metric-name">Gas / Air Quality</span>
+              <span class="metric-pin">V4</span>
+            </div>
+            <div class="metric-value" id="gas-value-1">—</div>
+            <div class="metric-bar-wrap">
+              <div class="metric-bar" id="gas-bar-1"></div>
+            </div>
+            <div class="metric-footer">
+              <span class="metric-range">0 — 4095 ADC</span>
+              <span class="metric-status" id="gas-status-1">—</span>
+            </div>
+          </div>
+
+          <div class="metric-card" id="card-bpm-1">
+            <div class="metric-header">
+              <span class="metric-name">Heart Rate</span>
+              <span class="metric-pin">V0</span>
+            </div>
+            <div class="metric-value" id="bpm-value-1">—</div>
+            <div class="metric-footer">
+              <span class="metric-range">bpm (avg)</span>
+              <span class="metric-status" id="bpm-status-1">—</span>
+            </div>
+          </div>
+
+          <div class="metric-card" id="card-motion-1">
+            <div class="metric-header">
+              <span class="metric-name">Motion</span>
+              <span class="metric-pin">V2</span>
+            </div>
+            <div class="metric-value" id="motion-value-1">—</div>
+            <div class="metric-footer">
+              <span class="metric-range">MPU-6050</span>
+              <span class="metric-status" id="motion-status-1">—</span>
+            </div>
+          </div>
+
+          <div class="metric-card" id="card-finger-1">
+            <div class="metric-header">
+              <span class="metric-name">Finger Detect</span>
+              <span class="metric-pin">V1</span>
+            </div>
+            <div class="metric-value" id="finger-value-1">—</div>
+            <div class="metric-footer">
+              <span class="metric-range">MAX30102</span>
+              <span class="metric-status" id="finger-status-1">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DEVICE 02 — STATIC -->
+      <div class="device-panel" id="device-panel-2">
+        <div class="device-header">
+          <div class="device-header-left">
+            <span class="device-dot"></span>
+            <span class="device-name">Device 02 — Field Unit B</span>
+          </div>
+          <span class="device-badge standby" id="device-badge-2">REFERENCE</span>
+        </div>
+
+        <div class="metric-row compact" aria-label="Device 02 readings">
+          <div class="metric-card" id="card-gas-2">
+            <div class="metric-header">
+              <span class="metric-name">Gas / Air Quality</span>
+              <span class="metric-pin">V4</span>
+            </div>
+            <div class="metric-value" id="gas-value-2">—</div>
+            <div class="metric-bar-wrap">
+              <div class="metric-bar" id="gas-bar-2"></div>
+            </div>
+            <div class="metric-footer">
+              <span class="metric-range">0 — 4095</span>
+              <span class="metric-status" id="gas-status-2">—</span>
+            </div>
+          </div>
+
+          <div class="metric-card" id="card-bpm-2">
+            <div class="metric-header">
+              <span class="metric-name">Heart Rate</span>
+              <span class="metric-pin">V0</span>
+            </div>
+            <div class="metric-value" id="bpm-value-2">—</div>
+            <div class="metric-footer">
+              <span class="metric-range">bpm</span>
+              <span class="metric-status" id="bpm-status-2">—</span>
+            </div>
+          </div>
+
+          <div class="metric-card" id="card-motion-2">
+            <div class="metric-header">
+              <span class="metric-name">Motion</span>
+              <span class="metric-pin">V2</span>
+            </div>
+            <div class="metric-value" id="motion-value-2">—</div>
+            <div class="metric-footer">
+              <span class="metric-range">MPU-6050</span>
+              <span class="metric-status" id="motion-status-2">—</span>
+            </div>
+          </div>
+
+          <div class="metric-card" id="card-finger-2">
+            <div class="metric-header">
+              <span class="metric-name">Finger Detect</span>
+              <span class="metric-pin">V1</span>
+            </div>
+            <div class="metric-value" id="finger-value-2">—</div>
+            <div class="metric-footer">
+              <span class="metric-range">MAX30102</span>
+              <span class="metric-status" id="finger-status-2">—</span>
+            </div>
+          </div>
+        </div>
+        <div class="device-updated">Static reference feed — no live poll</div>
+      </div>
+
+      <!-- DEVICE 03 — STATIC -->
+      <div class="device-panel" id="device-panel-3">
+        <div class="device-header">
+          <div class="device-header-left">
+            <span class="device-dot"></span>
+            <span class="device-name">Device 03 — Field Unit C</span>
+          </div>
+          <span class="device-badge standby" id="device-badge-3">REFERENCE</span>
+        </div>
+
+        <div class="metric-row compact" aria-label="Device 03 readings">
+          <div class="metric-card" id="card-gas-3">
+            <div class="metric-header">
+              <span class="metric-name">Gas / Air Quality</span>
+              <span class="metric-pin">V4</span>
+            </div>
+            <div class="metric-value" id="gas-value-3">—</div>
+            <div class="metric-bar-wrap">
+              <div class="metric-bar" id="gas-bar-3"></div>
+            </div>
+            <div class="metric-footer">
+              <span class="metric-range">0 — 4095</span>
+              <span class="metric-status" id="gas-status-3">—</span>
+            </div>
+          </div>
+
+          <div class="metric-card" id="card-bpm-3">
+            <div class="metric-header">
+              <span class="metric-name">Heart Rate</span>
+              <span class="metric-pin">V0</span>
+            </div>
+            <div class="metric-value" id="bpm-value-3">—</div>
+            <div class="metric-footer">
+              <span class="metric-range">bpm</span>
+              <span class="metric-status" id="bpm-status-3">—</span>
+            </div>
+          </div>
+
+          <div class="metric-card" id="card-motion-3">
+            <div class="metric-header">
+              <span class="metric-name">Motion</span>
+              <span class="metric-pin">V2</span>
+            </div>
+            <div class="metric-value" id="motion-value-3">—</div>
+            <div class="metric-footer">
+              <span class="metric-range">MPU-6050</span>
+              <span class="metric-status" id="motion-status-3">—</span>
+            </div>
+          </div>
+
+          <div class="metric-card" id="card-finger-3">
+            <div class="metric-header">
+              <span class="metric-name">Finger Detect</span>
+              <span class="metric-pin">V1</span>
+            </div>
+            <div class="metric-value" id="finger-value-3">—</div>
+            <div class="metric-footer">
+              <span class="metric-range">MAX30102</span>
+              <span class="metric-status" id="finger-status-3">—</span>
+            </div>
+          </div>
+        </div>
+        <div class="device-updated">Static reference feed — no live poll</div>
+      </div>
+
+      <!-- DEVICE 04 — STATIC -->
+      <div class="device-panel" id="device-panel-4">
+        <div class="device-header">
+          <div class="device-header-left">
+            <span class="device-dot"></span>
+            <span class="device-name">Device 04 — Field Unit D</span>
+          </div>
+          <span class="device-badge standby" id="device-badge-4">REFERENCE</span>
+        </div>
+
+        <div class="metric-row compact" aria-label="Device 04 readings">
+          <div class="metric-card" id="card-gas-4">
+            <div class="metric-header">
+              <span class="metric-name">Gas / Air Quality</span>
+              <span class="metric-pin">V4</span>
+            </div>
+            <div class="metric-value" id="gas-value-4">—</div>
+            <div class="metric-bar-wrap">
+              <div class="metric-bar" id="gas-bar-4"></div>
+            </div>
+            <div class="metric-footer">
+              <span class="metric-range">0 — 4095</span>
+              <span class="metric-status" id="gas-status-4">—</span>
+            </div>
+          </div>
+
+          <div class="metric-card" id="card-bpm-4">
+            <div class="metric-header">
+              <span class="metric-name">Heart Rate</span>
+              <span class="metric-pin">V0</span>
+            </div>
+            <div class="metric-value" id="bpm-value-4">—</div>
+            <div class="metric-footer">
+              <span class="metric-range">bpm</span>
+              <span class="metric-status" id="bpm-status-4">—</span>
+            </div>
+          </div>
+
+          <div class="metric-card" id="card-motion-4">
+            <div class="metric-header">
+              <span class="metric-name">Motion</span>
+              <span class="metric-pin">V2</span>
+            </div>
+            <div class="metric-value" id="motion-value-4">—</div>
+            <div class="metric-footer">
+              <span class="metric-range">MPU-6050</span>
+              <span class="metric-status" id="motion-status-4">—</span>
+            </div>
+          </div>
+
+          <div class="metric-card" id="card-finger-4">
+            <div class="metric-header">
+              <span class="metric-name">Finger Detect</span>
+              <span class="metric-pin">V1</span>
+            </div>
+            <div class="metric-value" id="finger-value-4">—</div>
+            <div class="metric-footer">
+              <span class="metric-range">MAX30102</span>
+              <span class="metric-status" id="finger-status-4">—</span>
+            </div>
+          </div>
+        </div>
+        <div class="device-updated">Static reference feed — no live poll</div>
+      </div>
+
+    </section>
+
+    <!-- ── CHARTS (Device 01 history only) ── -->
+    <section class="chart-row" aria-label="Device 01 history charts">
+
+      <div class="chart-panel">
+        <div class="panel-header">
+          <span class="panel-title">Device 01 — Heart Rate (30s history)</span>
+          <span class="panel-badge">BPM</span>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="bpm-chart" role="img" aria-label="Line chart showing recent BPM readings over time">BPM history over time.</canvas>
+        </div>
+      </div>
+
+      <div class="chart-panel">
+        <div class="panel-header">
+          <span class="panel-title">Device 01 — Gas Level (30s history)</span>
+          <span class="panel-badge">ADC</span>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="gas-chart" role="img" aria-label="Line chart showing recent gas sensor ADC readings over time">Gas level history over time.</canvas>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ── ACCELEROMETER (Device 01 only) ── -->
+    <section class="accel-section" aria-label="Device 01 accelerometer readings">
+
+      <div class="panel-header" style="margin-bottom: 1rem;">
+        <span class="panel-title">Device 01 — Accelerometer X / Y / Z</span>
+        <span class="panel-badge">MPU-6050</span>
+      </div>
+
+      <div class="accel-grid">
+
+        <div class="accel-card">
+          <div class="accel-axis-label">X axis</div>
+          <div class="accel-track">
+            <div class="accel-fill accel-fill-x" id="ax-fill"></div>
+            <div class="accel-center-line" aria-hidden="true"></div>
+          </div>
+          <div class="accel-readout" id="ax-val">—</div>
+          <div class="accel-unit">g</div>
+        </div>
+
+        <div class="accel-card">
+          <div class="accel-axis-label">Y axis</div>
+          <div class="accel-track">
+            <div class="accel-fill accel-fill-y" id="ay-fill"></div>
+            <div class="accel-center-line" aria-hidden="true"></div>
+          </div>
+          <div class="accel-readout" id="ay-val">—</div>
+          <div class="accel-unit">g</div>
+        </div>
+
+        <div class="accel-card">
+          <div class="accel-axis-label">Z axis</div>
+          <div class="accel-track">
+            <div class="accel-fill accel-fill-z" id="az-fill"></div>
+            <div class="accel-center-line" aria-hidden="true"></div>
+          </div>
+          <div class="accel-readout" id="az-val">—</div>
+          <div class="accel-unit">g</div>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <span>Safety Mask Project — ESP32 + MAX30102 + MPU-6050 + MQ-135</span>
+    <span>Blynk IoT ↔ Live Dashboard</span>
+  </footer>
+
+  <!-- ── ALERT MODAL ── -->
+  <div class="modal-overlay" id="alert-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-card">
+      <div class="modal-icon" aria-hidden="true">⚠</div>
+      <div class="modal-device" id="modal-device-name">Device 01 — Field Unit A</div>
+      <h2 class="modal-title" id="modal-title">Alert Triggered</h2>
+      <p class="modal-desc" id="modal-desc">—</p>
+      <button class="modal-ok-btn" id="modal-ok-btn">OK</button>
+    </div>
+  </div>
+
+  <!-- ── SCRIPTS (loaded at end) ── -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <script src="app.js"></script>
+
+</body>
+</html>
