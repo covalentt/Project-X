@@ -47,6 +47,21 @@ const STATIC_DEVICES = [
   { id: 4, name: "Device 04 — Field Unit D", gas: 295, bpm: 71, motion: "0", finger: "1" },
 ];
 
+const DEVICE_DETAIL_HISTORY = {
+  2: {
+    gas: [310, 330, 345, 360, 355, 320, 340, 365, 360, 345, 330, 340, 355, 350, 335, 345, 360, 370, 355, 350, 340, 332, 325, 328, 340, 348, 356, 352, 345, 338],
+    bpm: [74, 75, 78, 76, 77, 74, 75, 76, 79, 77, 75, 74, 73, 76, 78, 77, 79, 78, 76, 75, 74, 75, 76, 77, 78, 77, 76, 75, 74, 76],
+  },
+  3: {
+    gas: [420, 440, 430, 455, 465, 470, 462, 448, 452, 468, 480, 472, 450, 455, 460, 470, 475, 468, 457, 448, 439, 445, 450, 458, 462, 470, 466, 454, 448, 442],
+    bpm: [80, 81, 82, 84, 85, 83, 81, 82, 84, 83, 81, 80, 82, 83, 84, 85, 86, 84, 83, 82, 81, 80, 83, 85, 84, 83, 82, 81, 80, 82],
+  },
+  4: {
+    gas: [290, 300, 315, 305, 298, 287, 280, 290, 300, 295, 286, 292, 298, 306, 310, 302, 294, 290, 286, 294, 300, 298, 292, 286, 280, 286, 298, 305, 300, 294],
+    bpm: [69, 70, 71, 72, 71, 70, 69, 70, 71, 73, 72, 71, 70, 69, 70, 72, 73, 72, 71, 70, 69, 68, 69, 70, 71, 72, 71, 70, 69, 71],
+  },
+};
+
 // ─────────────────────────────────────────
 //  DOM REFERENCES (top-level / global)
 // ─────────────────────────────────────────
@@ -173,6 +188,59 @@ function createLineChart(canvasId, color, label, yMin, yMax) {
 const bpmChart = createLineChart("bpm-chart", "#1fcfaa", "BPM",  30,  160);
 const gasChart = createLineChart("gas-chart",  "#f0a030", "Gas",   0, 4095);
 
+function setSelectedDevice(deviceId) {
+  const devicePanel = document.getElementById(`device-panel-${deviceId}`);
+  const detailPanel = document.getElementById("device-detail-panel");
+  const detailName = document.getElementById("detail-device-name");
+  const detailBadge = document.getElementById("detail-badge");
+
+  document.querySelectorAll(".device-panel").forEach(panel => {
+    panel.classList.toggle("selected", panel === devicePanel);
+  });
+
+  if (!detailPanel || !devicePanel) return;
+
+  const isLiveDevice = deviceId === 1;
+  detailPanel.classList.remove("hidden");
+  detailName.textContent = devicePanel.querySelector(".device-name").textContent;
+  detailBadge.textContent = isLiveDevice ? "LIVE" : "STATIC";
+  detailBadge.className = isLiveDevice ? "device-badge live" : "device-badge standby";
+
+  if (isLiveDevice) {
+    document.querySelector(".detail-chart .panel-title").textContent = "Device 01 — Heart Rate History";
+    document.querySelectorAll(".detail-chart")[1].querySelector(".panel-title").textContent = "Device 01 — Gas History";
+    return;
+  }
+
+  const history = DEVICE_DETAIL_HISTORY[deviceId];
+  if (!history) return;
+
+  const bpmLabels = history.bpm.map((_, index) => `T-${history.bpm.length - index}`);
+  const gasLabels = history.gas.map((_, index) => `T-${history.gas.length - index}`);
+
+  bpmChart.data.labels = bpmLabels;
+  bpmChart.data.datasets[0].data = history.bpm;
+  bpmChart.options.scales.y.min = 60;
+  bpmChart.options.scales.y.max = 100;
+
+  gasChart.data.labels = gasLabels;
+  gasChart.data.datasets[0].data = history.gas;
+  gasChart.options.scales.y.min = 250;
+  gasChart.options.scales.y.max = 500;
+
+  bpmChart.update();
+gasChart.update();
+
+  document.querySelector(".detail-chart .panel-title").textContent = `${devicePanel.querySelector(".device-name").textContent} — Heart Rate History`;
+  document.querySelectorAll(".detail-chart")[1].querySelector(".panel-title").textContent = `${devicePanel.querySelector(".device-name").textContent} — Gas History`;
+}
+
+function hideSelectedDeviceDetail() {
+  const detailPanel = document.getElementById("device-detail-panel");
+  if (detailPanel) detailPanel.classList.add("hidden");
+  document.querySelectorAll(".device-panel").forEach(panel => panel.classList.remove("selected"));
+}
+
 function pushToChart(chart, timeLabel, value) {
   const d = chart.data;
   d.labels.push(timeLabel);
@@ -290,14 +358,16 @@ function initStaticDevices() {
 //  ALERT BANNER UPDATE (Device 01 only)
 // ─────────────────────────────────────────
 function updateAlertBanner(isAlerting) {
+  if (!dom.alertBanner) return;
+
   if (!isAlerting) {
     dom.alertBanner.className = "alert-banner ok";
-    dom.alertIcon.textContent = "◉";
-    dom.alertText.textContent = "ALL SYSTEMS OK";
+    if (dom.alertIcon) dom.alertIcon.textContent = "◉";
+    if (dom.alertText) dom.alertText.textContent = "ALL SYSTEMS OK";
   } else {
     dom.alertBanner.className = "alert-banner danger";
-    dom.alertIcon.textContent = "⚠";
-    dom.alertText.textContent = "ALERT — DEVICE 01 REQUIRES ATTENTION";
+    if (dom.alertIcon) dom.alertIcon.textContent = "⚠";
+    if (dom.alertText) dom.alertText.textContent = "ALERT — DEVICE 01 REQUIRES ATTENTION";
   }
 }
 
@@ -413,8 +483,22 @@ async function update() {
 }
 
 // ─────────────────────────────────────────
+//  DEVICE DETAIL TOGGLE
+// ─────────────────────────────────────────
+function bindDeviceSelection() {
+  document.querySelectorAll(".device-panel").forEach(panel => {
+    panel.addEventListener("click", () => {
+      const id = parseInt(panel.id.replace("device-panel-", ""), 10);
+      setSelectedDevice(id);
+    });
+  });
+}
+
+// ─────────────────────────────────────────
 //  INIT
 // ─────────────────────────────────────────
 initStaticDevices();
+bindDeviceSelection();
+hideSelectedDeviceDetail();
 update();
 setInterval(update, CONFIG.interval);

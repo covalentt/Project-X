@@ -436,7 +436,18 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.9rem;
-  transition: border-color 0.3s;
+  transition: border-color 0.3s, transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.device-panel:hover {
+  border-color: rgba(31,207,170,0.35);
+  transform: translateY(-1px);
+}
+
+.device-panel.selected {
+  border-color: rgba(31,207,170,0.5);
+  box-shadow: 0 0 0 1px rgba(31,207,170,0.08), 0 0 20px rgba(31,207,170,0.09);
 }
 
 .device-panel.live {
@@ -540,6 +551,53 @@ body {
 
 .metric-row.compact .metric-range {
   font-size: 10px;
+}
+
+.device-detail-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.device-detail-panel.hidden {
+  display: none;
+}
+
+.detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.detail-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.2rem;
+}
+
+.detail-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.detail-charts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.detail-chart {
+  background: var(--bg-panel);
 }
 
 /* ── ALERT MODAL ── */
